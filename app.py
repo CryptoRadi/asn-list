@@ -100,7 +100,7 @@ def main():
             if not delivery_changes.empty:
                 st.markdown("""---""")
                 st.markdown(''':orange[Changes in Delivery Dates:]''')
-                st.dataframe(delivery_changes, hide_index=True)
+                st.dataframe(delivery_changes, hide_index=True, column_order=("ASN", "Nupco PO No", "Shipped to Location", "Old Delivery Date", "Old Delivery Date"))
 
                 st.download_button(
                     label="Download Delivery Changes",
