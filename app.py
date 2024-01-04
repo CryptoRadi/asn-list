@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from io import BytesIO
+
 
 def read_excel(file):
     try:
@@ -70,6 +72,12 @@ def st_set_table_width():
         unsafe_allow_html=True
     )
 
+def to_excel(df):
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+    return output.getvalue()
+
 def main():
     st_set_table_width()
     st.title(":floppy_disk: Excel Comparison App")
@@ -92,15 +100,30 @@ def main():
             status_changes = compare_data(df1_cleaned, df2_cleaned, id_column, ['Request Status'], additional_columns_status)
             if not delivery_changes.empty:
                 st.markdown("""---""")
-                st.markdown(''':blue[Changes in Delivery Dates:]''')
+                st.markdown(''':orange[Changes in Delivery Dates:]''')
                 st.dataframe(delivery_changes, hide_index=True)
+
+                st.download_button(
+                    label="Download Delivery Changes",
+                    data=to_excel(delivery_changes),
+                    file_name="delivery_changes.xlsx",
+                    mime="application/vnd.ms-excel"
+                )
             else:
                 st.success("No changes in Delivery Dates found.")
 
             if not status_changes.empty:
                 st.markdown("""---""")
-                st.markdown(''':blue[Changes in Request Status:]''')
+                st.markdown(''':orange[Changes in Request Status:]''')
                 st.dataframe(status_changes, hide_index=True)
+        
+                # Download button for the status changes
+                st.download_button(
+                    label="Download Status Changes",
+                    data=to_excel(status_changes),
+                    file_name="status_changes.xlsx",
+                    mime="application/vnd.ms-excel"
+                )
             else:
                 st.success("No changes in Request Status found.")
     else:
