@@ -100,7 +100,7 @@ def main():
             if not status_changes.empty:
                 st.markdown("""---""")
                 st.markdown(''':blue[Changes in Request Status:]''')
-                st.dataframe(status_changes, hide_index=True, use_container_width=True)
+                st.dataframe(status_changes, hide_index=True)
             else:
                 st.success("No changes in Request Status found.")
     else:
